@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  base: '/meal-planner/',
+  base: '/planrepas/',
   plugins: [
     react(),
     VitePWA({
@@ -22,8 +22,8 @@ export default defineConfig({
         background_color: '#1a1a2e',
         display: 'standalone',
         orientation: 'any',
-        scope: '/meal-planner/',
-        start_url: '/meal-planner/',
+        scope: '/planrepas/',
+        start_url: '/planrepas/',
         categories: ['food', 'lifestyle', 'utilities'],
         icons: [
           {

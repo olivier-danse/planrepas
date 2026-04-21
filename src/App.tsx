@@ -5,7 +5,7 @@ import { ShoppingListPage } from '@/pages/ShoppingListPage';
 
 export function App() {
   return (
-    <BrowserRouter basename="/meal-planner">
+    <BrowserRouter basename="/planrepas">
       <AppHeader />
       <main className="app-main">
         <Routes>
