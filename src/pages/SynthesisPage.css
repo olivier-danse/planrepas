@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════════
+   SynthesisPage — Vue synthèse imprimable
+   ═══════════════════════════════════════════════════════ */
+
+.synth-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ─── Header ──────────────────────────────────────────── */
+.synth-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.synth-title {
+  font-family: var(--mp-font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--mp-text);
+}
+
+.synth-subtitle {
+  font-size: 0.78rem;
+  color: var(--mp-text-secondary);
+  margin-top: 2px;
+}
+
+.synth-print-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--mp-text);
+  color: var(--mp-bg);
+  border: none;
+  border-radius: var(--mp-radius-sm);
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.synth-print-btn:hover {
+  opacity: 0.85;
+}
+
+/* ─── Semaine ─────────────────────────────────────────── */
+.synth-week-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mp-text-secondary);
+  margin-bottom: 8px;
+  padding-left: 2px;
+}
+
+/* ─── Tableau ─────────────────────────────────────────── */
+.synth-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--mp-bg-card);
+  border: 1px solid var(--mp-border-light);
+  border-radius: var(--mp-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--mp-shadow-sm);
+}
+
+.synth-th {
+  padding: 8px 14px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mp-text-secondary);
+  text-align: left;
+  background: var(--mp-bg-subtle);
+  border-bottom: 1px solid var(--mp-border-light);
+}
+
+.synth-th:not(.synth-th--day) {
+  text-align: center;
+}
+
+/* ─── Lignes ──────────────────────────────────────────── */
+.synth-row td {
+  border-top: 1px solid var(--mp-border-light);
+}
+
+.synth-row--today .synth-day__name {
+  color: var(--mp-accent);
+}
+
+.synth-row--today td:first-child {
+  border-left: 3px solid var(--mp-accent);
+  padding-left: 11px;
+}
+
+.synth-row--empty td {
+  background: var(--mp-bg-subtle);
+  opacity: 0.6;
+}
+
+.synth-row--weekend td {
+  background: var(--mp-bg-subtle);
+}
+
+.synth-row--weekend.synth-row--today td {
+  background: var(--mp-accent-bg);
+}
+
+/* ─── Cellule jour ────────────────────────────────────── */
+.synth-day {
+  padding: 10px 14px;
+  width: 110px;
+  white-space: nowrap;
+}
+
+.synth-day__name {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--mp-text);
+}
+
+.synth-day__date {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--mp-text-secondary);
+}
+
+/* ─── Cellules midi/soir ──────────────────────────────── */
+.synth-cell {
+  padding: 8px 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.synth-cell--empty span {
+  color: var(--mp-border);
+  font-size: 0.85rem;
+}
+
+.synth-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+}
+
+/* ─── Badges ──────────────────────────────────────────── */
+.synth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.synth-badge--present {
+  background: #e8f0e5;
+  color: #588157;
+}
+
+.synth-badge--gamelle {
+  background: #e0e8f0;
+  color: #3d5a80;
+}
+
+.synth-badge__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── Légende ─────────────────────────────────────────── */
+.synth-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 14px;
+  background: var(--mp-bg-card);
+  border-radius: var(--mp-radius-md);
+  border: 1px solid var(--mp-border-light);
+}
+
+.synth-legend__empty {
+  font-size: 0.72rem;
+  color: var(--mp-text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Print
+   ═══════════════════════════════════════════════════════ */
+@media print {
+  .synth-print-btn { display: none; }
+  .synth-table { box-shadow: none; border: 1px solid #ccc; }
+  .synth-week { break-inside: avoid; }
+  .synth-badge--present { background: #e8f0e5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .synth-badge--gamelle { background: #e0e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .synth-row--today td:first-child { border-left: 3px solid #e07a5f !important; }
+}

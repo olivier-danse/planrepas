@@ -29,6 +29,14 @@ export function AppHeader() {
             Planning
           </NavLink>
           <NavLink
+            to="/synthese"
+            className={({ isActive }) =>
+              `app-nav-link${isActive ? ' active' : ''}`
+            }
+          >
+            Synthèse
+          </NavLink>
+          <NavLink
             to="/courses"
             className={({ isActive }) =>
               `app-nav-link${isActive ? ' active' : ''}`
