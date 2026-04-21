@@ -1,51 +1,63 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, ensureDefaultConfig } from '@/db';
+import { useState, useEffect } from 'react';
+import { supabase, rowToAppConfig } from '@/lib/supabase';
 import type { AppConfig, Person } from '@/types';
 import { DEFAULT_CONFIG } from '@/types';
 
-/**
- * Hook réactif qui fournit la configuration de l'application.
- * Se met à jour automatiquement quand IndexedDB change.
- */
 export function useAppConfig() {
-  const config = useLiveQuery(
-    () => db.appConfig.get(1),
-    [],
-    DEFAULT_CONFIG
-  );
+  const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
+
+  useEffect(() => {
+    // Chargement initial
+    supabase
+      .from('app_config')
+      .select('*')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => {
+        if (data) setConfig(rowToAppConfig(data));
+      });
+
+    // Subscription temps réel
+    const channel = supabase
+      .channel('app_config')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_config' },
+        (payload) => {
+          setConfig(rowToAppConfig(payload.new as never));
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const updateConfig = async (updates: Partial<Omit<AppConfig, 'id'>>) => {
-    await ensureDefaultConfig();
-    await db.appConfig.update(1, updates);
+    const row: Record<string, unknown> = {};
+    if (updates.persons !== undefined) row.persons = updates.persons;
+    if (updates.lockHoursBefore !== undefined) row.lock_hours_before = updates.lockHoursBefore;
+    await supabase.from('app_config').update(row).eq('id', 1);
   };
 
   const addPerson = async (name: string, color: string) => {
-    const current = await db.appConfig.get(1) ?? DEFAULT_CONFIG;
-    const id = name.toLowerCase().replace(/\s+/g, '-');
     const newPerson: Person = {
-      id,
+      id: name.toLowerCase().replace(/\s+/g, '-'),
       name,
       color,
-      order: current.persons.length,
+      order: config.persons.length,
     };
-    await db.appConfig.update(1, {
-      persons: [...current.persons, newPerson],
-    });
+    await updateConfig({ persons: [...config.persons, newPerson] });
   };
 
   const removePerson = async (personId: string) => {
-    const current = await db.appConfig.get(1) ?? DEFAULT_CONFIG;
-    await db.appConfig.update(1, {
-      persons: current.persons
-        .filter((p) => p.id !== personId)
-        .map((p, i) => ({ ...p, order: i })),
-    });
+    const persons = config.persons
+      .filter((p) => p.id !== personId)
+      .map((p, i) => ({ ...p, order: i }));
+    await updateConfig({ persons });
   };
 
   return {
-    config: config ?? DEFAULT_CONFIG,
-    persons: (config ?? DEFAULT_CONFIG).persons,
-    lockHoursBefore: (config ?? DEFAULT_CONFIG).lockHoursBefore,
+    config,
+    persons: config.persons,
+    lockHoursBefore: config.lockHoursBefore,
     updateConfig,
     addPerson,
     removePerson,

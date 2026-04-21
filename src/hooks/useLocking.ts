@@ -1,86 +1,63 @@
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db, toggleGroceryDone } from '@/db';
-import type { MealSlot } from '@/types';
-import {
-  getTwoWeeksRange,
-  parseDate,
-  isMealLocked,
-} from '@/utils/dates';
+import { useState, useEffect } from 'react';
+import { supabase, rowToGroceryDoneMark } from '@/lib/supabase';
+import type { MealSlot, GroceryDoneMark } from '@/types';
+import { getTwoWeeksRange, parseDate, isMealLocked } from '@/utils/dates';
 
-/**
- * Hook réactif pour les marqueurs "courses faites" et le verrouillage.
- *
- * Règles de verrouillage :
- * 1. Par défaut, un repas est verrouillé 24h avant l'heure du repas
- * 2. Si "courses faites" est coché pour un jour, ce jour et tous les jours
- *    précédents sont verrouillés (on ne peut plus modifier)
- * 3. Les jours passés sont toujours verrouillés
- */
 export function useLocking(lockHoursBefore: number = 24) {
   const { startDate, endDate } = getTwoWeeksRange();
+  const [groceryDoneMarks, setGroceryDoneMarks] = useState<GroceryDoneMark[]>([]);
 
-  const groceryDoneMarks = useLiveQuery(
-    () =>
-      db.groceryDoneMarks
-        .where('date')
-        .between(startDate, endDate, true, true)
-        .toArray(),
-    [startDate, endDate],
-    []
-  );
+  useEffect(() => {
+    // Chargement initial
+    supabase
+      .from('grocery_done_marks')
+      .select('*')
+      .gte('date', startDate)
+      .lte('date', endDate)
+      .then(({ data }) => {
+        if (data) setGroceryDoneMarks(data.map(rowToGroceryDoneMark));
+      });
 
-  // Set des dates marquées "courses faites"
-  const doneSet = new Set(
-    (groceryDoneMarks ?? []).map((m) => m.date)
-  );
+    // Subscription temps réel
+    const channel = supabase
+      .channel('grocery_done_marks')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'grocery_done_marks' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setGroceryDoneMarks((prev) => [...prev, rowToGroceryDoneMark(payload.new as never)]);
+          } else if (payload.eventType === 'DELETE') {
+            const old = payload.old as { id: string };
+            setGroceryDoneMarks((prev) => prev.filter((m) => m.id !== (old.id as unknown as number)));
+          }
+        }
+      )
+      .subscribe();
 
-  /**
-   * Vérifie si les courses sont faites pour un jour donné.
-   */
-  const isGroceryDoneForDate = (dateStr: string): boolean => {
-    return doneSet.has(dateStr);
-  };
+    return () => { supabase.removeChannel(channel); };
+  }, [startDate, endDate]);
 
-  /**
-   * Détermine si une cellule est verrouillée.
-   * Combine : verrouillage temporel + courses faites + jours passés
-   */
+  const doneSet = new Set(groceryDoneMarks.map((m) => m.date));
+
+  const isGroceryDoneForDate = (dateStr: string): boolean => doneSet.has(dateStr);
+
   const isCellLocked = (dateStr: string, slot: MealSlot): boolean => {
     const date = parseDate(dateStr);
-
-    // Verrouillage temporel (24h avant par défaut)
-    if (isMealLocked(date, slot, lockHoursBefore)) {
-      return true;
-    }
-
-    // Courses faites pour ce jour → verrouillé
-    if (doneSet.has(dateStr)) {
-      return true;
-    }
-
-    // Si un jour APRÈS celui-ci a "courses faites",
-    // alors ce jour-ci est aussi verrouillé (les courses couvrent ce jour)
-    // On vérifie si un marqueur existe pour une date >= dateStr
+    if (isMealLocked(date, slot, lockHoursBefore)) return true;
+    if (doneSet.has(dateStr)) return true;
     for (const markedDate of doneSet) {
-      if (markedDate >= dateStr) {
-        return true;
-      }
+      if (markedDate >= dateStr) return true;
     }
-
     return false;
   };
 
-  /**
-   * Toggle le marqueur "courses faites" pour un jour.
-   */
   const toggleDone = async (dateStr: string) => {
-    await toggleGroceryDone(dateStr);
+    const existing = groceryDoneMarks.find((m) => m.date === dateStr);
+    if (existing) {
+      await supabase.from('grocery_done_marks').delete().eq('date', dateStr);
+    } else {
+      await supabase.from('grocery_done_marks').insert({ date: dateStr, marked_at: new Date().toISOString() });
+    }
   };
 
-  return {
-    isGroceryDoneForDate,
-    isCellLocked,
-    toggleDone,
-    groceryDoneMarks: groceryDoneMarks ?? [],
-  };
+  return { isGroceryDoneForDate, isCellLocked, toggleDone, groceryDoneMarks };
 }
