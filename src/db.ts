@@ -2,6 +2,8 @@ import Dexie, { type Table } from 'dexie';
 import type {
   MealEntry,
   MealNote,
+  MealSlot,
+  MealStatus,
   GroceryDoneMark,
   AppConfig,
 } from '@/types';
@@ -40,9 +42,9 @@ export async function ensureDefaultConfig(): Promise<AppConfig> {
 // ─── Helpers CRUD pour les entrées de repas ────────────
 export async function upsertMealEntry(
   date: string,
-  slot: string,
+  slot: MealSlot,
   personId: string,
-  status: string
+  status: MealStatus
 ): Promise<void> {
   const existing = await db.mealEntries
     .where('[date+slot+personId]')
@@ -59,9 +61,9 @@ export async function upsertMealEntry(
   } else {
     await db.mealEntries.add({
       date,
-      slot: slot as MealEntry['slot'],
+      slot,
       personId,
-      status: status as MealEntry['status'],
+      status,
       updatedAt: now,
     });
   }
