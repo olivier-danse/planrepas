@@ -1,0 +1,33 @@
+.note-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--mp-text-muted);
+  transition: all var(--mp-duration) var(--mp-ease);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.note-btn:hover {
+  background: var(--mp-bg-hover);
+  color: var(--mp-accent);
+}
+
+.note-btn.has-note {
+  color: var(--mp-accent);
+  background: var(--mp-accent-bg);
+}
+
+.note-btn.has-note:hover {
+  background: var(--mp-accent-soft);
+}
+
+.note-btn.note-locked {
+  opacity: 0.4;
+}

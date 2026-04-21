@@ -1,0 +1,39 @@
+.grocery-done-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--mp-radius-sm);
+  cursor: pointer;
+  color: var(--mp-text-muted);
+  transition: all var(--mp-duration) var(--mp-ease);
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.grocery-done-btn:hover {
+  background: var(--mp-bg-hover);
+  color: var(--mp-text);
+}
+
+.grocery-done-btn.done {
+  color: var(--mp-present);
+  background: var(--mp-present-bg);
+}
+
+.grocery-done-btn.done:hover {
+  background: var(--mp-present-bg);
+  opacity: 0.8;
+}
+
+.grocery-done-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.grocery-done-icon {
+  flex-shrink: 0;
+}

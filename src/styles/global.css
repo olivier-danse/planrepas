@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════════════
+   Meal Planner — Design Tokens
+   Aesthetic: Warm minimal — earthy tones, soft geometry
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Palette ──────────────────────────────────────── */
+  --mp-bg: #faf8f5;
+  --mp-bg-card: #ffffff;
+  --mp-bg-subtle: #f3f0eb;
+  --mp-bg-hover: #ece8e1;
+
+  --mp-text: #2c2416;
+  --mp-text-secondary: #7a7062;
+  --mp-text-muted: #a89f93;
+
+  --mp-border: #e4ddd4;
+  --mp-border-light: #efe9e1;
+
+  --mp-accent: #e07a5f;
+  --mp-accent-soft: #f4c3b2;
+  --mp-accent-bg: #fef0eb;
+
+  --mp-present: #588157;
+  --mp-present-bg: #dcedc8;
+  --mp-present-text: #33691e;
+
+  --mp-absent: #b0a090;
+  --mp-absent-bg: #f0ece6;
+  --mp-absent-text: #7a7062;
+
+  --mp-gamelle: #3d5a80;
+  --mp-gamelle-bg: #d6e4f0;
+  --mp-gamelle-text: #1b3a5c;
+
+  --mp-locked-bg: #f7f4f0;
+  --mp-locked-stripe: #ebe6de;
+
+  --mp-danger: #c0392b;
+  --mp-danger-bg: #fce8e6;
+
+  /* ─── Typography ───────────────────────────────────── */
+  --mp-font-display: 'Fraunces', Georgia, serif;
+  --mp-font-body: 'DM Sans', system-ui, sans-serif;
+
+  /* ─── Spacing ──────────────────────────────────────── */
+  --mp-radius-sm: 6px;
+  --mp-radius-md: 10px;
+  --mp-radius-lg: 16px;
+  --mp-radius-xl: 24px;
+
+  /* ─── Shadows ──────────────────────────────────────── */
+  --mp-shadow-sm: 0 1px 3px rgba(44, 36, 22, 0.06);
+  --mp-shadow-md: 0 4px 12px rgba(44, 36, 22, 0.08);
+  --mp-shadow-lg: 0 8px 24px rgba(44, 36, 22, 0.1);
+
+  /* ─── Transitions ──────────────────────────────────── */
+  --mp-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --mp-duration: 200ms;
+}
+
+/* ─── Dark mode ─────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mp-bg: #1a1a2e;
+    --mp-bg-card: #23233d;
+    --mp-bg-subtle: #2a2a45;
+    --mp-bg-hover: #32325a;
+
+    --mp-text: #e8e4de;
+    --mp-text-secondary: #a8a098;
+    --mp-text-muted: #6d6560;
+
+    --mp-border: #3a3a55;
+    --mp-border-light: #2f2f48;
+
+    --mp-accent: #e8926e;
+    --mp-accent-soft: #5a3a2e;
+    --mp-accent-bg: #3a2820;
+
+    --mp-present: #81c784;
+    --mp-present-bg: #1b3a1e;
+    --mp-present-text: #a5d6a7;
+
+    --mp-absent-bg: #2a2a3e;
+    --mp-absent-text: #8a8078;
+
+    --mp-gamelle: #64b5f6;
+    --mp-gamelle-bg: #1a2e40;
+    --mp-gamelle-text: #90caf9;
+
+    --mp-locked-bg: #222238;
+    --mp-locked-stripe: #2a2a42;
+
+    --mp-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2);
+    --mp-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+    --mp-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Reset & Base
+   ═══════════════════════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--mp-font-body);
+  background: var(--mp-bg);
+  color: var(--mp-text);
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Safe areas for notch devices */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════════════════
+   App Shell
+   ═══════════════════════════════════════════════════════ */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--mp-bg);
+  border-bottom: 1px solid var(--mp-border-light);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.app-logo {
+  font-family: var(--mp-font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--mp-text);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-logo-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--mp-accent);
+  border-radius: var(--mp-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-family: var(--mp-font-body);
+  font-weight: 500;
+}
+
+.app-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.app-nav-link {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mp-text-secondary);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: var(--mp-radius-sm);
+  transition: all var(--mp-duration) var(--mp-ease);
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.app-nav-link:hover {
+  background: var(--mp-bg-subtle);
+  color: var(--mp-text);
+}
+
+.app-nav-link.active {
+  background: var(--mp-accent-bg);
+  color: var(--mp-accent);
+}
+
+.app-main {
+  flex: 1;
+  padding: 16px;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Offline Banner
+   ═══════════════════════════════════════════════════════ */
+
+.offline-banner {
+  background: var(--mp-accent-bg);
+  color: var(--mp-accent);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 4px 8px;
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════════════════ */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Smooth page transitions */
+.page-enter {
+  animation: pageIn 300ms var(--mp-ease) forwards;
+}
+
+@keyframes pageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Scrollbar Styling
+   ═══════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--mp-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mp-text-muted);
+}
