@@ -1,7 +1,7 @@
 # MealPlan — Document d'architecture technique
 
-> Version : 1.0-dev (étapes 1 à 3 complétées)
-> Dernière mise à jour : 20 avril 2026
+> Version : 1.1-dev (étapes 1 à 3 + migration Supabase + page Synthèse)
+> Dernière mise à jour : 21 avril 2026
 
 ---
 
@@ -17,11 +17,11 @@
 | Bundler | Vite | 5.3 | Build, HMR, optimisation |
 | Langage | TypeScript | 5.5 | Typage strict |
 | Routing | react-router-dom | 6.23 | Navigation SPA |
-| Base de données | Dexie.js (IndexedDB) | 4.0 | Persistance offline |
-| Réactivité DB | dexie-react-hooks | 1.1 | LiveQuery → re-render auto |
+| Base de données | Supabase (PostgreSQL) | — | Persistance cloud + sync temps réel |
+| Réactivité DB | Supabase Realtime | — | Subscriptions postgres_changes → re-render auto |
 | PWA | vite-plugin-pwa + Workbox | 0.20 / 7.1 | Service Worker, cache, manifest |
 | CI/CD | GitHub Actions | — | Build + deploy automatique |
-| Hébergement | GitHub Pages | — | Statique, HTTPS gratuit |
+| Hébergement | GitHub Pages | — | https://olivier-danse.github.io/planrepas/ |
 
 ### 1.2 Typographie et design
 
@@ -398,7 +398,9 @@ Pipeline:
 | 1 | Scaffolding et architecture PWA | ✅ Fait | package.json, vite.config.ts, index.html, global.css, deploy.yml |
 | 2 | Modèle de données et hooks | ✅ Fait | types/index.ts, db.ts, useAppConfig, useMealEntries, useLocking, useWeeks |
 | 3 | Grille de planning | ✅ Fait | PlanningGrid, StatusSelect, GroceryDoneToggle, NoteButton, PlanningPage |
-| 4 | Verrouillage avancé | ⬜ À faire | Affiner useLocking, UI de sélection de plage, configuration du délai |
+| — | Migration Supabase (sync temps réel) | ✅ Fait | lib/supabase.ts, hooks réécrits, supabase-setup.sql |
+| — | Page Synthèse (tableau imprimable) | ✅ Fait | SynthesisPage.tsx, SynthesisPage.css, route /synthese |
+| 4 | Verrouillage avancé (UI config) | ⬜ À faire | Affiner useLocking, UI de sélection de plage, configuration du délai |
 | 5 | Notes de repas et liste de courses | ⬜ À faire | NoteModal, NoteForm, ShoppingList, useShoppingList, categories |
 | 6 | Archivage Google Drive | ⬜ À faire | googleAuth, driveSync, archiveWeek, SyncStatus, SettingsPage |
 | 7 | Tests, polish et déploiement | ⬜ À faire | *.test.ts, e2e/, Lighthouse, CI optimisé |
