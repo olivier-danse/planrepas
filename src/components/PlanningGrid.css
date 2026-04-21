@@ -38,7 +38,7 @@
   background: var(--mp-bg-card);
   border: 1px solid var(--mp-border-light);
   border-radius: var(--mp-radius-lg);
-  overflow: hidden;
+  overflow: clip;
   box-shadow: var(--mp-shadow-sm);
 }
 
@@ -50,9 +50,6 @@
   background: var(--mp-bg-subtle);
   border-bottom: 1px solid var(--mp-border-light);
   gap: 8px;
-  position: sticky;
-  top: 49px; /* sous le header app */
-  z-index: 10;
 }
 
 .grid-header-cell {
